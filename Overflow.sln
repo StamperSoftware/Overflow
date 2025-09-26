@@ -8,6 +8,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{1A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestionService", "QuestionService\QuestionService.csproj", "{A248BA0F-D115-4F10-B471-DDD3E1058DDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchService", "SearchService\SearchService.csproj", "{8E921FCB-F3F9-4F21-8415-48D310BEBE88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{2F705D6A-6CA3-4E98-B77E-88AF2107E5C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{27C4BA8F-02E7-49EF-91F8-864799A14C19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,8 +32,18 @@ Global
 		{A248BA0F-D115-4F10-B471-DDD3E1058DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A248BA0F-D115-4F10-B471-DDD3E1058DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A248BA0F-D115-4F10-B471-DDD3E1058DDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E921FCB-F3F9-4F21-8415-48D310BEBE88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E921FCB-F3F9-4F21-8415-48D310BEBE88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E921FCB-F3F9-4F21-8415-48D310BEBE88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E921FCB-F3F9-4F21-8415-48D310BEBE88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27C4BA8F-02E7-49EF-91F8-864799A14C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27C4BA8F-02E7-49EF-91F8-864799A14C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27C4BA8F-02E7-49EF-91F8-864799A14C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27C4BA8F-02E7-49EF-91F8-864799A14C19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A248BA0F-D115-4F10-B471-DDD3E1058DDF} = {1AC29CEA-C104-4B50-B8E9-E27DC2D41FD2}
+		{8E921FCB-F3F9-4F21-8415-48D310BEBE88} = {1AC29CEA-C104-4B50-B8E9-E27DC2D41FD2}
+		{27C4BA8F-02E7-49EF-91F8-864799A14C19} = {2F705D6A-6CA3-4E98-B77E-88AF2107E5C0}
 	EndGlobalSection
 EndGlobal

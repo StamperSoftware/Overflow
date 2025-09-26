@@ -1,13 +1,15 @@
 ﻿using System.Security.Claims;
+using Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuestionService.DTOs;
 using QuestionService.Interfaces;
 using QuestionService.Models;
+using Wolverine;
 
 namespace QuestionService.Controllers;
 
-public class QuestionsController(IQuestionService questionService):BaseApiController
+public class QuestionsController(IQuestionService questionService, IMessageBus bus):BaseApiController
 {
     [Authorize, HttpPost]
     public async Task<ActionResult<Question>> CreateQuestion(CreateQuestionDto questionDto)
@@ -48,6 +50,7 @@ public class QuestionsController(IQuestionService questionService):BaseApiContro
         try
         {
             await questionService.UpdateQuestion(id, userId, dto);
+            await bus.PublishAsync(new QuestionUpdated(id, dto.Title, dto.Content, dto.Tags.ToArray()));
             return NoContent();
         }
         catch (Exception e)
@@ -69,6 +72,7 @@ public class QuestionsController(IQuestionService questionService):BaseApiContro
         try
         {
             await questionService.DeleteQuestion(id, userId);
+            await bus.PublishAsync(new QuestionDeleted(id));
             return Ok();
         }
         catch (Exception e)

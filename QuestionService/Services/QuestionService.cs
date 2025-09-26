@@ -1,20 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contracts;
+using Microsoft.EntityFrameworkCore;
 using QuestionService.Data;
 using QuestionService.DTOs;
 using QuestionService.Interfaces;
 using QuestionService.Models;
+using Wolverine;
 
 namespace QuestionService.Services;
 
-public class QuestionService(QuestionDbContext db):IQuestionService 
+public class QuestionService(QuestionDbContext db, IMessageBus bus, ITagService tagService):IQuestionService 
 {
     public async Task<Question> CreateQuestion(CreateQuestionDto questionDto, string userId, string userName)
     {
 
-        if (!await ValidateTags(questionDto.Tags)) throw new Exception("Invalid tags");
+        if (!await tagService.AreTagsValidAsync(questionDto.Tags)) throw new Exception("Invalid tags");
         var question = Question.CreateNewQuestion(questionDto, userId, userName);
         db.Questions.Add(question);
         await db.SaveChangesAsync();
+        await bus.PublishAsync(new QuestionCreated(question.Id, question.Title, question.Content, question.CreatedAt, question.TagSlugs));
         return question;
     }
 
@@ -35,7 +38,7 @@ public class QuestionService(QuestionDbContext db):IQuestionService
     public async Task UpdateQuestion(string id, string userId, UpdateQuestionDto dto)
     {
         var question = await db.Questions.FindAsync(id) ?? throw new Exception("Could not get question");
-        if (!await ValidateTags(dto.Tags)) throw new Exception("Invalid tags");
+        if (!await tagService.AreTagsValidAsync(dto.Tags)) throw new Exception("Invalid tags");
         if (question.AskerId != userId) throw new Exception("Forbidden");
         question.Title = dto.Title;
         question.Content = dto.Content;
@@ -53,10 +56,4 @@ public class QuestionService(QuestionDbContext db):IQuestionService
         await db.SaveChangesAsync();
     }
 
-    private async Task<bool> ValidateTags(List<string> tags)
-    {
-        var validTags = await db.Tags.Where(t => tags.Contains(t.Slug)).ToListAsync();
-        var missing = tags.Except(validTags.Select(t => t.Slug)).ToList();
-        return missing.Count == 0;
-    }
 }
