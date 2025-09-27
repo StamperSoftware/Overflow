@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using System.ComponentModel;
+using Contracts;
 using Microsoft.EntityFrameworkCore;
 using QuestionService.Data;
 using QuestionService.DTOs;
@@ -30,9 +31,9 @@ public class QuestionService(QuestionDbContext db, IMessageBus bus, ITagService 
     
     public async Task<Question?> GetQuestion(string id)
     {
-        var question = db.Questions.Where(q => q.Id == id);
-        await question.ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ViewCount, x => x.ViewCount + 1));
-        return await question.FirstOrDefaultAsync();
+        var question = await db.Questions.Include(q => q.Answers).FirstOrDefaultAsync(q => q.Id == id);
+        await db.Questions.Where(q => q.Id == id).ExecuteUpdateAsync(setters => setters.SetProperty(x => x.ViewCount, x => x.ViewCount + 1));
+        return question;
     }
 
     public async Task UpdateQuestion(string id, string userId, UpdateQuestionDto dto)
@@ -46,6 +47,19 @@ public class QuestionService(QuestionDbContext db, IMessageBus bus, ITagService 
         question.UpdatedAt = DateTime.UtcNow;
         db.Update(question);
         await db.SaveChangesAsync();
+    }
+
+    public async Task MarkAcceptedAnswer(string questionId, string answerId, string userId)
+    {
+        var question = await db.Questions.Include(q => q.Answers).FirstOrDefaultAsync(q => q.Id == questionId) ?? throw new Exception("Could not get question");
+        if (userId != question.AskerId) throw new Exception("Forbidden");
+        var answer = question.Answers.FirstOrDefault(a => a.Id == answerId) ?? throw new Exception("Could not get answer");
+        if (question.HasAcceptedAnswer) throw new Exception("Question Already Answered");
+
+        answer.Accepted = true;
+        question.HasAcceptedAnswer = true;
+        await db.SaveChangesAsync();
+        await bus.PublishAsync(new QuestionMarkedAnswered(question.Id));
     }
 
     public async Task DeleteQuestion(string id, string userId)

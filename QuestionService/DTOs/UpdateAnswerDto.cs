@@ -1,0 +1,3 @@
+﻿namespace QuestionService.DTOs;
+
+public record UpdateAnswerDto(string Content);

@@ -9,7 +9,8 @@ using Wolverine;
 
 namespace QuestionService.Controllers;
 
-public class QuestionsController(IQuestionService questionService, IMessageBus bus):BaseApiController
+public class QuestionsController(IQuestionService questionService, IMessageBus bus, IAnswerService answerService)
+    : BaseApiController
 {
     [Authorize, HttpPost]
     public async Task<ActionResult<Question>> CreateQuestion(CreateQuestionDto questionDto)
@@ -81,6 +82,84 @@ public class QuestionsController(IQuestionService questionService, IMessageBus b
             {
                 "Forbidden" => Forbid(),
                 _ => BadRequest("could not delete question"),
+            };
+        }
+    }
+
+    [Authorize, HttpPost("{questionId}/answers")]
+    public async Task<ActionResult<Answer>> CreateAnswer(CreateAnswerDto dto, string questionId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userName = User.FindFirstValue("name");
+        if (userId is null || userName is null) return BadRequest("Could not find user");
+        try
+        {
+            var answer = await answerService.CreateAnswer(questionId, userId, userName, dto);
+            return Ok(answer);
+        }
+        catch
+        {
+            return BadRequest("Could not create answer");
+        }
+    }
+
+    [Authorize, HttpPut("{questionId}/answers/{answerId}")]
+    public async Task<ActionResult> UpdateAnswer(UpdateAnswerDto dto, string answerId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null) return BadRequest("Could not find user");
+        try
+        {
+            await answerService.UpdateAnswer(answerId, userId, dto);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return e.Message switch
+            {
+                "Forbidden" => Forbid(),
+                _ => BadRequest(e.Message),
+            };
+        }
+    }
+
+    [Authorize, HttpDelete("{questionId}/answers/{answerId}")]
+    public async Task<ActionResult<Answer>> DeleteAnswer(string answerId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null) return BadRequest("Could not get user");
+        try
+        {
+            await answerService.DeleteAnswer(answerId, userId);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return e.Message switch
+            {
+                "Forbidden" => Forbid(),
+                _ => BadRequest(e.Message),
+            };
+        }
+    }
+
+    [Authorize, HttpPost("{questionId}/answers/{answerId}/accept")]
+    public async Task<ActionResult> AcceptAnswer(string answerId, string questionId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null) return BadRequest("Could not get user");
+
+        try
+        {
+            await questionService.MarkAcceptedAnswer(questionId, answerId, userId);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return e.Message switch
+            {
+                "Forbidden" => Forbid(),
+                _ => BadRequest(e.Message),
             };
         }
     }

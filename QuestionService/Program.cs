@@ -13,6 +13,7 @@ builder.Services.AddMemoryCache();
 builder.AddServiceDefaults();
 builder.Services.AddScoped<IQuestionService, QuestionService.Services.QuestionService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IAnswerService, AnswerService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 

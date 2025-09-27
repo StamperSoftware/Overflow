@@ -10,4 +10,5 @@ public interface IQuestionService
     public Task<Question?> GetQuestion(string id);
     public Task DeleteQuestion(string id, string userId);
     public Task UpdateQuestion(string id, string userId, UpdateQuestionDto dto);
+    public Task MarkAcceptedAnswer(string questionId, string answerId, string userId);
 }
