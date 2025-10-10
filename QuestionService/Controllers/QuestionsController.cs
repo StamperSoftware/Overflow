@@ -163,4 +163,24 @@ public class QuestionsController(IQuestionService questionService, IMessageBus b
             };
         }
     }
+
+    [HttpGet("errors")]
+    public ActionResult GetErrorResponses(int code)
+    {
+        
+        ModelState.AddModelError("Problem One", "Validation One Failed");
+        ModelState.AddModelError("Problem Two", "Validation Two Failed");
+        
+        return code switch
+        {
+            400 => BadRequest("Bad"),
+            401 => Unauthorized(),
+            403 => Forbid(),
+            404 => NotFound(),
+            500 => throw new Exception("This is server error"),
+            _ => ValidationProblem()
+        };
+    }
+    
+    
 }

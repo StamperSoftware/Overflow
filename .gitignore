@@ -4,3 +4,6 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.idea
+/.aspire
+infrastructure/.env
+infrastructure/realms/overflow-realm.json

@@ -20,18 +20,6 @@ public class Question
     public int AnswerCount { get; set; }
     public List<Answer> Answers { get; set; } = [];
     
-    public static Question CreateNewQuestion(string title, string content, List<string> tags, string askerId, string askerDisplayName)
-    {
-        return new Question
-        {
-            Title = title,
-            Content = content,
-            TagSlugs = tags,
-            AskerDisplayName = askerDisplayName,
-            AskerId = askerId
-        };
-    }
-    
     public static Question CreateNewQuestion(CreateQuestionDto question, string askerId, string askerDisplayName)
     {
         return new Question
@@ -40,7 +28,8 @@ public class Question
             Content = question.Content,
             TagSlugs = question.Tags,
             AskerDisplayName = askerDisplayName,
-            AskerId = askerId
+            AskerId = askerId,
+            AnswerCount = 0,
         };
     }
 }

@@ -20,6 +20,7 @@ public class SearchQuestion
             Title = title,
             Content = Helpers.Html.Sanitize(content),
             Tags = tags,
+            AnswerCount = 0,
         };
     }
    
