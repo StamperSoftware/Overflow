@@ -7,3 +7,4 @@ riderModule.iml
 /.aspire
 infrastructure/.env
 infrastructure/realms/overflow-realm.json
+/web-app/.idea
